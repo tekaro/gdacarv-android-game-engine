@@ -11,8 +11,8 @@ import android.view.SurfaceView;
 public abstract class GameView extends SurfaceView {
 	
 	private SurfaceHolder mHolder;
-	private GameLoopThread gameLoopThread;
-	private ArrayList<Sprite> mSprites;
+	protected GameLoopThread gameLoopThread;
+	protected ArrayList<Sprite> mSprites;
 	
 	public GameView(Context context) {
 		super(context);
