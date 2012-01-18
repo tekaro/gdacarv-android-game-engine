@@ -3,16 +3,12 @@ package com.gdacarv.engine.androidgame;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.util.Log;
-import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 
-public class GameView extends SurfaceView {
+public abstract class GameView extends SurfaceView {
 	
 	private SurfaceHolder mHolder;
 	private GameLoopThread gameLoopThread;
@@ -40,9 +36,9 @@ public class GameView extends SurfaceView {
 
                @Override
                public void surfaceCreated(SurfaceHolder holder) {
+            	   onLoad();
             	   gameLoopThread.setRunning(true);
                    gameLoopThread.start();
-                   mSprites.add(new Sprite(GameView.this, BitmapFactory.decodeResource(getResources(), R.drawable.bad4), 4, 3)); //Take off
                }
 
                @Override
@@ -50,6 +46,8 @@ public class GameView extends SurfaceView {
                }
         });
 	}
+
+	protected abstract void onLoad();
 
 	@Override
     protected void onDraw(Canvas canvas) {
@@ -66,12 +64,7 @@ public class GameView extends SurfaceView {
 		return true;
 	}
 	
-	public void TouchEvents(MotionEvent event){
-		int x = (int) event.getX();
-		int y = (int) event.getY();
-		mSprites.get(0).x = x;
-		mSprites.get(0).y = y;
-	}
+	public abstract void TouchEvents(MotionEvent event);
 	
 	
 
