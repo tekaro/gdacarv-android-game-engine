@@ -7,7 +7,7 @@ public class GameLoopThread extends Thread {
     private GameView mGameView;
     private boolean mRunning = false;
     
-    static final long FPS = 30;
+    static final long FPS = 5;
    
     public GameLoopThread(GameView view) {
           this.mGameView = view;
