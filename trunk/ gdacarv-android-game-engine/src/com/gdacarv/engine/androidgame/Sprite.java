@@ -10,7 +10,7 @@ public class Sprite {
 	public static final int ANIM_GO = 1;
 	public static final int ANIM_GOBACK = 2;
 	
-	public int animation = ANIM_GOBACK;
+	protected int animation = ANIM_GOBACK;
 	
     public int x = 0, y = 0; 
     private Bitmap mBitmap;
@@ -21,7 +21,7 @@ public class Sprite {
     
     private int currentFrame = 0;
     public int width,height;
-    private int firstFrame = 0, lastFrame = 0;
+    private int firstFrame = 0, lastFrame = 1;
     
     private boolean animationControl = false;
     
@@ -36,6 +36,8 @@ public class Sprite {
           this.width = bmp.getWidth() / BMP_COLUMNS;
           this.height = bmp.getHeight() / BMP_ROWS;
           lastFrame = BMP_COLUMNS*BMP_ROWS;
+          if(getFrameCount() == 1)
+        	  animation = ANIM_STOP;
     }
 
     public void update() {
@@ -106,7 +108,18 @@ public class Sprite {
     	currentFrame = frame;
     	firstFrame = iframe;
     	lastFrame = lframe;
-    	animation = type;
+    	if(getFrameCount() > 1)
+    		animation = type;
     	return true;
+    }
+    
+    public boolean setAnimation(int type){
+    	if(getFrameCount() > 1){
+    		animation = type;
+    		return true;
+    	}
+		else
+			return false;
+    			
     }
 }  
