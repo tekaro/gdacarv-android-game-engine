@@ -2,6 +2,7 @@ package com.gdacarv.engine.androidgame;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
 
 public class Sprite {
@@ -24,6 +25,7 @@ public class Sprite {
     private int firstFrame = 0, lastFrame = 1;
     
     private boolean animationControl = false;
+    public Paint mPaint;
     
     public Sprite(Bitmap bmp) {
         this(bmp, 1, 1);
@@ -62,7 +64,7 @@ public class Sprite {
 	        canvas.drawBitmap(mBitmap, 
 	        		new Rect(srcX, srcY, srcX + width, srcY + height), 
 	        		new Rect(x, y, x + width, y + height), 
-	        		null);
+	        		mPaint);
     	}
     }
     

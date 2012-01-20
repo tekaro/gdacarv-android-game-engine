@@ -8,7 +8,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public abstract class GameView extends SurfaceView {
+public abstract class GameView extends SurfaceView{
 	
 	private SurfaceHolder mHolder;
 	protected GameLoopThread gameLoopThread;
