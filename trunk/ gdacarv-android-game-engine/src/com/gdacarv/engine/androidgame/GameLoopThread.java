@@ -6,8 +6,6 @@ public class GameLoopThread extends Thread {
 	
     private GameView mGameView;
     private boolean mRunning = false;
-    
-    static public long FPS = 30;
    
     public GameLoopThread(GameView view) {
           this.mGameView = view;
@@ -19,7 +17,7 @@ public class GameLoopThread extends Thread {
 
     @Override
     public void run() {
-    	long ticksPS = 1000 / FPS;
+    	long ticksPS = 1000 / mGameView.FPS;
         long startTime, sleepTime;
 		  while (mRunning) {
 		         Canvas c = null;
@@ -41,5 +39,6 @@ public class GameLoopThread extends Thread {
                                sleep(sleepTime);
                  } catch (Exception e) {}
 		  }
+		  
     }
 }  

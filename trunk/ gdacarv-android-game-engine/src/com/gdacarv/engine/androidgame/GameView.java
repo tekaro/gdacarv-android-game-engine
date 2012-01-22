@@ -14,6 +14,8 @@ public abstract class GameView extends SurfaceView{
 	protected GameLoopThread gameLoopThread;
 	protected ArrayList<Sprite> mSprites;
 	
+	public long FPS = 30;
+	
 	public GameView(Context context) {
 		super(context);
 		mSprites = new ArrayList<Sprite>();
@@ -36,7 +38,10 @@ public abstract class GameView extends SurfaceView{
 
                @Override
                public void surfaceCreated(SurfaceHolder holder) {
-            	   onLoad();
+            	   if(gameLoopThread.getState() == Thread.State.TERMINATED)
+            		   gameLoopThread = new GameLoopThread(GameView.this);
+            	   else
+                	   onLoad();            		   
             	   gameLoopThread.setRunning(true);
                    gameLoopThread.start();
                }
