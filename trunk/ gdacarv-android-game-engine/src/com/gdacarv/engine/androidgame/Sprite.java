@@ -57,13 +57,15 @@ public class Sprite {
 		}
     }
    
-    public void onDraw(Canvas canvas) {
+    public void onDraw(Canvas canvas, int cameraX, int cameraY) {
     	if(visible){
-	    	int srcX = (currentFrame % BMP_COLUMNS) * width;
-	        int srcY = (currentFrame / BMP_COLUMNS) * height;
+	    	int srcX = (currentFrame % BMP_COLUMNS) * width,
+	        	srcY = (currentFrame / BMP_COLUMNS) * height,
+	        	endX = x - cameraX,
+	        	endY = y - cameraY;
 	        canvas.drawBitmap(mBitmap, 
 	        		new Rect(srcX, srcY, srcX + width, srcY + height), 
-	        		new Rect(x, y, x + width, y + height), 
+	        		new Rect(endX, endY, endX + width, endY + height), 
 	        		mPaint);
     	}
     }
