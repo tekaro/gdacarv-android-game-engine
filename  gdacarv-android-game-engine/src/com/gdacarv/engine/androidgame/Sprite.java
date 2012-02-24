@@ -124,4 +124,8 @@ public class Sprite {
 			return false;
     			
     }
+    
+    public boolean collides(int testX, int testY){
+    	return testX >= x && testY >= y && testX <= x+width && testY <= y+height;
+    }
 }  

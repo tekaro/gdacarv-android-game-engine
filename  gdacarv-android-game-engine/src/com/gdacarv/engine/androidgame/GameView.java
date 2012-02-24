@@ -13,11 +13,14 @@ public abstract class GameView extends SurfaceView{
 	private SurfaceHolder mHolder;
 	protected GameLoopThread gameLoopThread;
 	protected ArrayList<Sprite> mSprites;
+	protected HandlerTouchEvents mHandlerTouchEvents;
 	
 	public long FPS = 30;
 	
-	public GameView(Context context) {
+	public GameView(Context context, boolean handler) {
 		super(context);
+		if(handler)
+			mHandlerTouchEvents = new HandlerTouchEvents();
 		mSprites = new ArrayList<Sprite>();
 		gameLoopThread = new GameLoopThread(this);
 		mHolder = getHolder();
@@ -65,18 +68,63 @@ public abstract class GameView extends SurfaceView{
     public boolean onTouchEvent(MotionEvent event) {
 		synchronized (getHolder()) {
 			TouchEvents(event);
+			if(mHandlerTouchEvents != null){
+				mHandlerTouchEvents.handle(event);
+			}
 		}
 		return true;
 	}
 	
-	public abstract void TouchEvents(MotionEvent event);
+	public void TouchEvents(MotionEvent event) {
+	}
 	
-	
+	public void TouchEvents(HandlerTouchEvents handler) {
+	}
 
+	public void input() {
+		if(mHandlerTouchEvents != null){
+			TouchEvents(mHandlerTouchEvents);
+		}
+	}
+	
 	public void update() {
 		for (Sprite sprite : mSprites) 
             sprite.update();
 	}
 
-	
+	public class HandlerTouchEvents {
+		
+		public int[] x = {0,0}, y = {0,0};		
+		public int[] xLast = {0,0}, yLast = {0,0};
+		public boolean[] touching = {false, false};
+		
+
+		public void handle(MotionEvent event) {
+			int xTemp, yTemp;
+			updatePosition(0, (int) event.getX(0), (int) event.getY(0));
+			xTemp = (int) event.getX(1);
+			yTemp = (int) event.getY(1);
+			if(xTemp != x[0] || yTemp != y[0]){
+				updatePosition(1, xTemp, yTemp);
+				touching[1] = true;
+			}
+			else{
+				touching[1] = false;
+			}
+			if(event.getAction() == 0)
+				touching[0] = true;
+			else if(event.getAction() == 1)
+				touching[0] = false;
+		}
+		
+		public void updatePosition(int index, int xNew, int yNew){
+			if(x[index] != xNew || y[index] != yNew){
+				xLast[index] = x[index];
+				x[index] = xNew;
+				yLast[index] = y[index];
+				y[index] = yNew;
+			}
+		}
+		
+	}
 }
