@@ -25,6 +25,7 @@ public class GameLoopThread extends Thread {
 		         try {
 		                c = mGameView.getHolder().lockCanvas();
 		                synchronized (mGameView.getHolder()) {
+		                	mGameView.input();
 		                	mGameView.update();
 		                	mGameView.onDraw(c);
 		                }
