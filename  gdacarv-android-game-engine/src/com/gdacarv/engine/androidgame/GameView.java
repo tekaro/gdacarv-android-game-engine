@@ -14,6 +14,7 @@ public abstract class GameView extends SurfaceView{
 	protected GameLoopThread gameLoopThread;
 	protected ArrayList<Sprite> mSprites;
 	protected HandlerTouchEvents mHandlerTouchEvents;
+	protected int CameraX = 0, CameraY = 0;
 	
 	public long FPS = 30;
 	
@@ -61,7 +62,7 @@ public abstract class GameView extends SurfaceView{
     protected void onDraw(Canvas canvas) {
 		canvas.drawRGB(0, 0, 0);
 		for (Sprite sprite : mSprites) 
-            sprite.onDraw(canvas);
+            sprite.onDraw(canvas, CameraX, CameraY);
     }
 	
 	@Override
