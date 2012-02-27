@@ -76,18 +76,20 @@ public abstract class GameView extends SurfaceView{
 		return true;
 	}
 	
-	public void TouchEvents(MotionEvent event) {
+	protected void TouchEvents(MotionEvent event) {
 	}
 	
-	public void TouchEvents(HandlerTouchEvents handler) {
+	protected void TouchEvents(int x, int y) {
 	}
 
 	public void input() {
 		if(mHandlerTouchEvents != null){
-			TouchEvents(mHandlerTouchEvents);
+			for(int i = 0; i < 2; i++)
+				if(mHandlerTouchEvents.touching[i])
+					TouchEvents(mHandlerTouchEvents.x[i], mHandlerTouchEvents.y[i]);
 		}
 	}
-	
+
 	public void update() {
 		for (Sprite sprite : mSprites) 
             sprite.update();
