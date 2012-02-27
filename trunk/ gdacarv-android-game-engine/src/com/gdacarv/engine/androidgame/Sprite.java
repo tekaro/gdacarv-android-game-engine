@@ -14,13 +14,13 @@ public class Sprite {
 	protected int animation = ANIM_GOBACK;
 	
     public int x = 0, y = 0; 
-    private Bitmap mBitmap;
+    protected Bitmap mBitmap;
     public boolean visible = true;
     
     private final int BMP_ROWS;
-    private final int BMP_COLUMNS;
+    protected final int BMP_COLUMNS;
     
-    private int currentFrame = 0;
+    protected int currentFrame = 0;
     public int width,height;
     private int firstFrame = 0, lastFrame = 1;
     
@@ -59,14 +59,16 @@ public class Sprite {
    
     public void onDraw(Canvas canvas, int cameraX, int cameraY) {
     	if(visible){
-	    	int srcX = (currentFrame % BMP_COLUMNS) * width,
-	        	srcY = (currentFrame / BMP_COLUMNS) * height,
-	        	endX = x - cameraX,
+	        int endX = x - cameraX,
 	        	endY = y - cameraY;
-	        canvas.drawBitmap(mBitmap, 
-	        		new Rect(srcX, srcY, srcX + width, srcY + height), 
-	        		new Rect(endX, endY, endX + width, endY + height), 
-	        		mPaint);
+	    	if(endX + width > 0 && endX < canvas.getWidth() && endY + height > 0 && endY < canvas.getHeight()){
+	    		int srcX = (currentFrame % BMP_COLUMNS) * width,
+	        	srcY = (currentFrame / BMP_COLUMNS) * height;
+	    		canvas.drawBitmap(mBitmap, 
+		        		new Rect(srcX, srcY, srcX + width, srcY + height), 
+		        		new Rect(endX, endY, endX + width, endY + height), 
+		        		mPaint);
+	    	}
     	}
     }
     
