@@ -130,4 +130,10 @@ public abstract class GameView extends SurfaceView{
 		}
 		
 	}
+
+	public void preUpdate() {
+	}
+
+	public void posUpdate() {
+	}
 }
