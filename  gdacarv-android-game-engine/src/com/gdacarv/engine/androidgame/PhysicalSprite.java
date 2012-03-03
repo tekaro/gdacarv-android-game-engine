@@ -9,11 +9,19 @@ public class PhysicalSprite extends Sprite {
 	public boolean FrictionXOn;
 	
 	public PhysicalSprite(Bitmap bmp) {
-		this(bmp, 1, 1);
+		this(bmp, 1, 1, 0, 0);
+	}
+	
+	public PhysicalSprite(int x, int y, Bitmap bmp) {
+		this(bmp, 1, 1, x, y);
 	}
 
 	public PhysicalSprite(Bitmap bmp, int bmp_rows, int bmp_columns) {
-		super(bmp, bmp_rows, bmp_columns);
+		this(bmp, bmp_rows, bmp_columns, 0, 0);
+	}
+
+	public PhysicalSprite(Bitmap bmp, int bmp_rows, int bmp_columns, int x, int y) {
+		super(bmp, bmp_rows, bmp_columns, x, y);
 		Movement = new Vector();
 		Acceleration = new Vector();
 		FrictionXOn = true;
