@@ -30,6 +30,7 @@ public abstract class GameView extends SurfaceView{
                @Override
                public void surfaceDestroyed(SurfaceHolder holder) {
             	   boolean retry = true;
+            	   onSurfaceDestroyed();
                    gameLoopThread.setRunning(false);
                    while (retry) {
                           try {
@@ -42,8 +43,10 @@ public abstract class GameView extends SurfaceView{
 
                @Override
                public void surfaceCreated(SurfaceHolder holder) {
-            	   if(gameLoopThread.getState() == Thread.State.TERMINATED)
+            	   if(gameLoopThread.getState() == Thread.State.TERMINATED){
             		   gameLoopThread = new GameLoopThread(GameView.this);
+            		   onReload();
+            	   }
             	   else
                 	   onLoad();            		   
             	   gameLoopThread.setRunning(true);
@@ -56,7 +59,14 @@ public abstract class GameView extends SurfaceView{
         });
 	}
 
-	protected abstract void onLoad();
+	protected void onReload() {
+	}
+
+	protected void onSurfaceDestroyed() {
+	}
+
+	protected void onLoad() {
+	}
 
 	@Override
     protected void onDraw(Canvas canvas) {

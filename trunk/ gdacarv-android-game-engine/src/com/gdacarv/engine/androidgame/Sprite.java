@@ -28,19 +28,29 @@ public class Sprite {
     public Paint mPaint;
     
     public Sprite(Bitmap bmp) {
-        this(bmp, 1, 1);
-  }
+        this(bmp, 1, 1, 0, 0);
+    }
+    
+    public Sprite(int x, int y, Bitmap bmp) {
+        this(bmp, 1, 1, x, y);
+    }
    
     public Sprite(Bitmap bmp, int bmp_rows, int bmp_columns) {
-          this.mBitmap = bmp;
-          this.BMP_ROWS = bmp_rows;
-          this.BMP_COLUMNS = bmp_columns;
-          this.width = bmp.getWidth() / BMP_COLUMNS;
-          this.height = bmp.getHeight() / BMP_ROWS;
-          lastFrame = BMP_COLUMNS*BMP_ROWS;
-          if(getFrameCount() == 1)
-        	  animation = ANIM_STOP;
+          this(bmp, bmp_rows, bmp_columns, 0, 0);
     }
+    
+    public Sprite(Bitmap bmp, int bmp_rows, int bmp_columns, int x, int y) {
+        this.mBitmap = bmp;
+        this.BMP_ROWS = bmp_rows;
+        this.BMP_COLUMNS = bmp_columns;
+        this.width = bmp.getWidth() / BMP_COLUMNS;
+        this.height = bmp.getHeight() / BMP_ROWS;
+        lastFrame = BMP_COLUMNS*BMP_ROWS;
+        if(getFrameCount() == 1)
+      	  animation = ANIM_STOP;
+        this.x = x;
+        this.y = y;
+  }
 
     public void update() {
     	switch (animation) {
