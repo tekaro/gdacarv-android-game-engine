@@ -89,14 +89,14 @@ public abstract class GameView extends SurfaceView{
 	protected void TouchEvents(MotionEvent event) {
 	}
 	
-	protected void TouchEvents(int x, int y) {
+	protected void TouchEvents(int x, int y, int action) {
 	}
 
 	public void input() {
 		if(mHandlerTouchEvents != null){
 			for(int i = 0; i < 2; i++)
 				if(mHandlerTouchEvents.touching[i])
-					TouchEvents(mHandlerTouchEvents.x[i], mHandlerTouchEvents.y[i]);
+					TouchEvents(mHandlerTouchEvents.x[i], mHandlerTouchEvents.y[i], mHandlerTouchEvents.action[i]);
 		}
 	}
 
@@ -110,6 +110,7 @@ public abstract class GameView extends SurfaceView{
 		public int[] x = {0,0}, y = {0,0};		
 		public int[] xLast = {0,0}, yLast = {0,0};
 		public boolean[] touching = {false, false};
+		public int[] action = {-1,-1};
 		
 
 		public void handle(MotionEvent event) {
@@ -128,8 +129,15 @@ public abstract class GameView extends SurfaceView{
 				touching[0] = true;
 			else if(event.getAction() == 1)
 				touching[0] = false;
+			int index = (event.getAction() & MotionEvent.ACTION_POINTER_ID_MASK)/256;
+			if(action[index] == -1)
+				action[index] = event.getAction() & MotionEvent.ACTION_MASK;
 		}
 		
+		public void resetActions() {
+			action[0] = action[1] = -1;
+		}
+
 		public void updatePosition(int index, int xNew, int yNew){
 			if(x[index] != xNew || y[index] != yNew){
 				xLast[index] = x[index];
@@ -142,6 +150,7 @@ public abstract class GameView extends SurfaceView{
 	}
 
 	public void preUpdate() {
+		if(mHandlerTouchEvents != null) mHandlerTouchEvents.resetActions();
 	}
 
 	public void posUpdate() {
