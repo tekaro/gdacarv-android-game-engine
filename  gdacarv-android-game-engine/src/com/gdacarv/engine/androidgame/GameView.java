@@ -150,9 +150,9 @@ public abstract class GameView extends SurfaceView{
 	}
 
 	public void preUpdate() {
-		if(mHandlerTouchEvents != null) mHandlerTouchEvents.resetActions();
 	}
 
 	public void posUpdate() {
+		if(mHandlerTouchEvents != null) mHandlerTouchEvents.resetActions();
 	}
 }
