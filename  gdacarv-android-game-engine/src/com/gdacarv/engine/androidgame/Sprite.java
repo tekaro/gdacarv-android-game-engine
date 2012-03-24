@@ -1,3 +1,12 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Android Game Engine developed by Gustavo Carvalho (gdacarv@gmail.com)													//
+//Use it freely, but keep and give credits, please.																		//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Android Game Engine desenvolvido por Gustavo Carvalho (gdacarv@gmail.com)												//
+//Use-o livremente, mas mantenha e der os créditos, por favor.															//
+//Visite http://tutoriandroid.blogspot.com para tutoriais de Android e detalhamento da implementação desta Game Engine. //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 package com.gdacarv.engine.androidgame;
 
 import android.graphics.Bitmap;
@@ -10,6 +19,7 @@ public class Sprite {
 	public static final int ANIM_STOP = 0;
 	public static final int ANIM_GO = 1;
 	public static final int ANIM_GOBACK = 2;
+	public static final int ANIM_JUSTGO = 3;
 	
 	protected int animation = ANIM_GOBACK;
 	
@@ -20,9 +30,11 @@ public class Sprite {
     private final int BMP_ROWS;
     protected final int BMP_COLUMNS;
     
-    protected int currentFrame = 0;
+    protected float currentFrame = 0;
     public int width,height;
     private int firstFrame = 0, lastFrame = 1;
+    
+    protected float animationSpeed = 1f;
     
     private boolean animationControl = false;
     public Paint mPaint;
@@ -55,14 +67,18 @@ public class Sprite {
     public void update() {
     	switch (animation) {
 		case ANIM_GO:
-			currentFrame = ((currentFrame+1-firstFrame) % (lastFrame-firstFrame)) + firstFrame;
+			currentFrame = ((currentFrame+animationSpeed-firstFrame) % (lastFrame-firstFrame)) + firstFrame;
 			break;
 		case ANIM_GOBACK:
 			if(currentFrame+1 == lastFrame)
 				animationControl = true;
 			else if(currentFrame == firstFrame)
 				animationControl = false;
-			currentFrame = currentFrame+(animationControl ? -1 : 1);
+			currentFrame = currentFrame+(animationControl ? -animationSpeed : animationSpeed);
+			break;
+		case ANIM_JUSTGO:
+			if(currentFrame < lastFrame-1)
+				currentFrame += animationSpeed;
 			break;
 		}
     }
@@ -72,14 +88,18 @@ public class Sprite {
 	        int endX = x - cameraX,
 	        	endY = y - cameraY;
 	    	if(endX + width > 0 && endX < canvas.getWidth() && endY + height > 0 && endY < canvas.getHeight()){
-	    		int srcX = (currentFrame % BMP_COLUMNS) * width,
-	        	srcY = (currentFrame / BMP_COLUMNS) * height;
 	    		canvas.drawBitmap(mBitmap, 
-		        		new Rect(srcX, srcY, srcX + width, srcY + height), 
+		        		getFrameRect(), 
 		        		new Rect(endX, endY, endX + width, endY + height), 
 		        		mPaint);
 	    	}
     	}
+    }
+    
+    protected Rect getFrameRect(){
+    	int srcX = (((int)currentFrame) % BMP_COLUMNS) * width,
+    	srcY = (((int)currentFrame) / BMP_COLUMNS) * height;
+    	return new Rect(srcX, srcY, srcX + width, srcY + height);
     }
     
     public void setFirstFrame(int frame){
@@ -119,7 +139,7 @@ public class Sprite {
     }
     
     public boolean setAnimation(int frame, int iframe, int lframe, int type){
-    	if(frame < iframe || frame >= lframe || iframe >= lframe || type < 0 || type > 2)
+    	if(frame < iframe || frame >= lframe || iframe >= lframe || type < 0 || type > 3)
     		return false;
     	currentFrame = frame;
     	firstFrame = iframe;
