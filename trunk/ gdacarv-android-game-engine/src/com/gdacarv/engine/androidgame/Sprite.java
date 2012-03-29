@@ -21,7 +21,7 @@ public class Sprite {
 	public static final int ANIM_GOBACK = 2;
 	public static final int ANIM_JUSTGO = 3;
 	
-	protected int animation = ANIM_GOBACK;
+	private int animation = ANIM_GOBACK;
 	
     public int x = 0, y = 0; 
     protected Bitmap mBitmap;
@@ -33,6 +33,7 @@ public class Sprite {
     protected float currentFrame = 0;
     public int width,height;
     private int firstFrame = 0, lastFrame = 1;
+    public OnAnimationEndListener endAnimationListener;
     
     protected float animationSpeed = 1f;
     
@@ -79,6 +80,11 @@ public class Sprite {
 		case ANIM_JUSTGO:
 			if(currentFrame < lastFrame-1)
 				currentFrame += animationSpeed;
+			else{
+				setAnimation(ANIM_STOP);
+				if(endAnimationListener != null)
+					endAnimationListener = endAnimationListener.OnAnimationEnd();
+			}
 			break;
 		}
     }
@@ -149,6 +155,31 @@ public class Sprite {
     	return true;
     }
     
+    public boolean setAnimation(int frame, int iframe, int lframe, OnAnimationEndListener endAnimation){
+    	boolean result = setAnimation(frame, iframe, lframe, ANIM_JUSTGO);
+		if(result){
+			endAnimationListener = endAnimation;
+	    	animation = ANIM_JUSTGO;
+		}
+    	return result;
+    }
+	
+	public boolean setAnimation(int frame, int iframe, int lframe, int type, float speed) {
+		boolean result = setAnimation(frame, iframe, lframe, type);
+		if(result)
+			animationSpeed = speed;
+		return result;
+	}
+	
+	public boolean setAnimation(int frame, int iframe, int lframe, float speed, OnAnimationEndListener endAnimation){
+		boolean result = setAnimation(frame, iframe, lframe, ANIM_JUSTGO, speed);
+		if(result){
+			endAnimationListener = endAnimation;
+	    	animation = ANIM_JUSTGO;
+		}
+		return result;
+	}
+    
     public boolean setAnimation(int type){
     	if(getFrameCount() > 1){
     		animation = type;
@@ -161,5 +192,9 @@ public class Sprite {
     
     public boolean collides(int testX, int testY){
     	return testX >= x && testY >= y && testX <= x+width && testY <= y+height;
+    }
+    
+    public interface OnAnimationEndListener{
+    	public OnAnimationEndListener OnAnimationEnd();
     }
 }  
