@@ -33,7 +33,8 @@ public class Sprite {
     protected float currentFrame = 0;
     public int width,height;
     private int firstFrame = 0, lastFrame = 1;
-    public OnAnimationEndListener endAnimationListener;
+
+	public OnAnimationEndListener endAnimationListener;
     
     protected float animationSpeed = 1f;
     
@@ -197,4 +198,12 @@ public class Sprite {
     public interface OnAnimationEndListener{
     	public OnAnimationEndListener OnAnimationEnd();
     }
+
+    public int getFirstFrame() {
+		return firstFrame;
+	}
+
+	public int getLastFrame() {
+		return lastFrame;
+	}
 }  
