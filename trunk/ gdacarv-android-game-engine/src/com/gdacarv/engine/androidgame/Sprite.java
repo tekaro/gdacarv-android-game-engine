@@ -16,12 +16,8 @@ import android.graphics.Rect;
 
 public class Sprite {
 
-	public static final int ANIM_STOP = 0;
-	public static final int ANIM_GO = 1;
-	public static final int ANIM_GOBACK = 2;
-	public static final int ANIM_JUSTGO = 3;
 	
-	private int animation = ANIM_GOBACK;
+	private Animation animation = Animation.GOBACK;
 	
     public int x = 0, y = 0; 
     protected Bitmap mBitmap;
@@ -38,7 +34,7 @@ public class Sprite {
     
     protected float animationSpeed = 1f;
     
-    private boolean animationControl = false;
+    private boolean animationDirectionControl = false;
     public Paint mPaint;
     
     public Sprite(Bitmap bmp) {
@@ -61,28 +57,40 @@ public class Sprite {
         this.height = bmp.getHeight() / BMP_ROWS;
         lastFrame = BMP_COLUMNS*BMP_ROWS;
         if(getFrameCount() == 1)
-      	  animation = ANIM_STOP;
+      	  animation = Animation.STOP;
         this.x = x;
         this.y = y;
   }
 
     public void update() {
     	switch (animation) {
-		case ANIM_GO:
+		case GO:
 			currentFrame = ((currentFrame+animationSpeed-firstFrame) % (lastFrame-firstFrame)) + firstFrame;
 			break;
-		case ANIM_GOBACK:
-			if(currentFrame+1 == lastFrame)
-				animationControl = true;
-			else if(currentFrame == firstFrame)
-				animationControl = false;
-			currentFrame = currentFrame+(animationControl ? -animationSpeed : animationSpeed);
+		case GOBACK:
+			if(!animationDirectionControl && currentFrame+animationSpeed >= lastFrame)
+				animationDirectionControl = true;
+			else if(animationDirectionControl && currentFrame-animationSpeed < firstFrame)
+				animationDirectionControl = false;
+			currentFrame = currentFrame+(animationDirectionControl ? -animationSpeed : animationSpeed);
 			break;
-		case ANIM_JUSTGO:
-			if(currentFrame < lastFrame-1)
+		case JUSTGO:
+			if(currentFrame+animationSpeed < lastFrame)
 				currentFrame += animationSpeed;
 			else{
-				setAnimation(ANIM_STOP);
+				setAnimation(Animation.STOP);
+				if(endAnimationListener != null)
+					endAnimationListener = endAnimationListener.OnAnimationEnd();
+			}
+			break;
+		case GO_INVERSE:
+			currentFrame = ((currentFrame-animationSpeed+lastFrame-2*firstFrame) % (lastFrame-firstFrame)) + firstFrame;
+			break;
+		case JUSTGO_INVERSE:
+			if(currentFrame-animationSpeed >= firstFrame)
+				currentFrame -= animationSpeed;
+			else{
+				setAnimation(Animation.STOP);
 				if(endAnimationListener != null)
 					endAnimationListener = endAnimationListener.OnAnimationEnd();
 			}
@@ -114,11 +122,11 @@ public class Sprite {
     	if(firstFrame >= lastFrame){
     		lastFrame = firstFrame + 1;
     		currentFrame = firstFrame;
-    		animationControl = false;
+    		animationDirectionControl = false;
     	}else
     	if(currentFrame < firstFrame){
     		currentFrame = firstFrame;
-    		animationControl = false;
+    		animationDirectionControl = false;
     	}
     }
     
@@ -127,11 +135,11 @@ public class Sprite {
     	if(lastFrame <= firstFrame){
     		firstFrame = lastFrame - 1;
 			currentFrame = firstFrame;
-			animationControl = false;
+			animationDirectionControl = false;
     	}else
     	if(currentFrame > frame){
     		currentFrame = firstFrame;
-    		animationControl = false;
+    		animationDirectionControl = false;
     	}
     }
     
@@ -145,8 +153,8 @@ public class Sprite {
     	lastFrame = frame+1;
     }
     
-    public boolean setAnimation(int frame, int iframe, int lframe, int type){
-    	if(frame < iframe || frame >= lframe || iframe >= lframe || type < 0 || type > 3)
+    public boolean setAnimation(int frame, int iframe, int lframe, Animation type){
+    	if(frame < iframe || frame >= lframe || iframe >= lframe)
     		return false;
     	currentFrame = frame;
     	firstFrame = iframe;
@@ -157,15 +165,15 @@ public class Sprite {
     }
     
     public boolean setAnimation(int frame, int iframe, int lframe, OnAnimationEndListener endAnimation){
-    	boolean result = setAnimation(frame, iframe, lframe, ANIM_JUSTGO);
+    	boolean result = setAnimation(frame, iframe, lframe, Animation.JUSTGO);
 		if(result){
 			endAnimationListener = endAnimation;
-	    	animation = ANIM_JUSTGO;
+	    	animation = Animation.JUSTGO;
 		}
     	return result;
     }
 	
-	public boolean setAnimation(int frame, int iframe, int lframe, int type, float speed) {
+	public boolean setAnimation(int frame, int iframe, int lframe, Animation type, float speed) {
 		boolean result = setAnimation(frame, iframe, lframe, type);
 		if(result)
 			animationSpeed = speed;
@@ -173,15 +181,15 @@ public class Sprite {
 	}
 	
 	public boolean setAnimation(int frame, int iframe, int lframe, float speed, OnAnimationEndListener endAnimation){
-		boolean result = setAnimation(frame, iframe, lframe, ANIM_JUSTGO, speed);
+		boolean result = setAnimation(frame, iframe, lframe, Animation.JUSTGO, speed);
 		if(result){
 			endAnimationListener = endAnimation;
-	    	animation = ANIM_JUSTGO;
+	    	animation = Animation.JUSTGO;
 		}
 		return result;
 	}
     
-    public boolean setAnimation(int type){
+    public boolean setAnimation(Animation type){
     	if(getFrameCount() > 1){
     		animation = type;
     		return true;
