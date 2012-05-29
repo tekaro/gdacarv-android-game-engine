@@ -30,7 +30,7 @@ public class Sprite {
     public int width,height;
     private int firstFrame = 0, lastFrame = 1;
 
-	public OnAnimationEndListener endAnimationListener;
+	private OnAnimationEndListener endAnimationListener;
     
     protected float animationSpeed = 1f;
     
@@ -79,8 +79,7 @@ public class Sprite {
 				currentFrame += animationSpeed;
 			else{
 				setAnimation(Animation.STOP);
-				if(endAnimationListener != null)
-					endAnimationListener = endAnimationListener.OnAnimationEnd();
+				consumeEndAnimationListener();
 			}
 			break;
 		case GO_INVERSE:
@@ -91,12 +90,19 @@ public class Sprite {
 				currentFrame -= animationSpeed;
 			else{
 				setAnimation(Animation.STOP);
-				if(endAnimationListener != null)
-					endAnimationListener = endAnimationListener.OnAnimationEnd();
+				consumeEndAnimationListener();
 			}
 			break;
 		}
     }
+
+	private void consumeEndAnimationListener() {
+		if(endAnimationListener != null){
+			OnAnimationEndListener listener = endAnimationListener;
+			endAnimationListener = null;
+			listener.OnAnimationEnd();
+		}
+	}
    
     public void onDraw(Canvas canvas, int cameraX, int cameraY) {
     	if(visible){
@@ -154,21 +160,20 @@ public class Sprite {
     }
     
     public boolean setAnimation(int frame, int iframe, int lframe, Animation type){
-    	if(frame < iframe || frame >= lframe || iframe >= lframe)
+    	if(frame < iframe || frame > lframe || iframe >= lframe)
     		return false;
     	currentFrame = frame;
     	firstFrame = iframe;
     	lastFrame = lframe;
-    	if(getFrameCount() > 1)
+    	//if(getFrameCount() > 1)
     		animation = type;
     	return true;
     }
     
-    public boolean setAnimation(int frame, int iframe, int lframe, OnAnimationEndListener endAnimation){
-    	boolean result = setAnimation(frame, iframe, lframe, Animation.JUSTGO);
+    public boolean setAnimation(int frame, int iframe, int lframe, Animation type, OnAnimationEndListener endAnimation){
+    	boolean result = setAnimation(frame, iframe, lframe, type);
 		if(result){
 			endAnimationListener = endAnimation;
-	    	animation = Animation.JUSTGO;
 		}
     	return result;
     }
@@ -180,11 +185,10 @@ public class Sprite {
 		return result;
 	}
 	
-	public boolean setAnimation(int frame, int iframe, int lframe, float speed, OnAnimationEndListener endAnimation){
-		boolean result = setAnimation(frame, iframe, lframe, Animation.JUSTGO, speed);
+	public boolean setAnimation(int frame, int iframe, int lframe, Animation type, float speed, OnAnimationEndListener endAnimation){
+		boolean result = setAnimation(frame, iframe, lframe, type, speed);
 		if(result){
-			endAnimationListener = endAnimation;
-	    	animation = Animation.JUSTGO;
+			this.endAnimationListener = endAnimation;
 		}
 		return result;
 	}
@@ -204,7 +208,7 @@ public class Sprite {
     }
     
     public interface OnAnimationEndListener{
-    	public OnAnimationEndListener OnAnimationEnd();
+    	public void OnAnimationEnd();
     }
 
     public int getFirstFrame() {
@@ -213,5 +217,9 @@ public class Sprite {
 
 	public int getLastFrame() {
 		return lastFrame;
+	}
+
+	public void posUpdate() {
+		
 	}
 }  
